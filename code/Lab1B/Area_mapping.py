@@ -2,11 +2,12 @@ import picar_4wd as fc
 import time
 import numpy as np
 import pandas as pd
-import math
+import math 
+import scipy as sc
 
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 18
+STEP = 5
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -105,10 +106,16 @@ while count <50:
     print(angle_distance,x,y)
     # print(angle_distance[1])
     if (angle_distance[1] < 100) and (angle_distance[1]>=0):
+        # input distance values
         arr[y,x]=angle_distance[1]
+        arr[y,x] = 1
         print(arr)
     count+=1
-
-df = pd.DataFrame(arr)
-df.to_csv('test.csv')
+b = sc.ndimage.binary_dilation(arr,[
+    [0, 1, 0],
+    [ 1, 1,  1],
+    [0, 1, 0],
+])
+df = pd.DataFrame(b.astype(int))
+df.to_csv('test_pad.csv')
 
