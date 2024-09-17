@@ -1,11 +1,12 @@
 import picar_4wd as fc
 import time
 import numpy as np
+import pandas as pd
 import math
 
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 5
+STEP = 20
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -83,11 +84,20 @@ def scan_step(ref):
 
 
 fc.servo.set_angle(0)
-array = np.zeros((36,50))
-print(array)
-while True:
+arr = np.zeros((100,200))
+print(arr)
+count = 0
+while count <100:
     distance = scan_step(35)
-    x = math.cos(angle_distance[0])*angle_distance[1]
-    y = math.sin(angle_distance[0])*angle_distance[1]
+    x = int(math.cos(angle_distance[0])*angle_distance[1])
+    y = int(math.sin(angle_distance[0])*angle_distance[1])
     print(angle_distance,x,y)
-    print(distance)
+    print(angle_distance[1])
+    if angle_distance[1] <= 100:
+        arr[x,y]=angle_distance[1]
+        print(arr)
+    count+=1
+
+df = pd.DataFrame(arr)
+df.to_csv('test.csv')
+

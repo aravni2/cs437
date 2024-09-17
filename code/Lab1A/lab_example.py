@@ -7,7 +7,7 @@ def move25():
     fc.backward(100)
     x=0
     for i in range(2):
-        time.sleep(.1)
+        time.sleep(.5)
         speed=speed4()
         x+=speed*1
         print(f"{speed}mm/s")
