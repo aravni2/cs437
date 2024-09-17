@@ -6,7 +6,7 @@ import math
 
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 20
+STEP = 18
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -84,17 +84,28 @@ def scan_step(ref):
 
 
 fc.servo.set_angle(0)
+time.sleep(1)
 arr = np.zeros((100,200))
 print(arr)
 count = 0
-while count <100:
+while count <50:
     distance = scan_step(35)
-    x = int(math.cos(angle_distance[0])*angle_distance[1])
-    y = int(math.sin(angle_distance[0])*angle_distance[1])
+    rads = (angle_distance[0]* math.pi)/180
+    print(rads)
+    if angle_distance[0] <0:
+        x = int(math.sin(abs(rads))*angle_distance[1])+100
+
+    if angle_distance[0] >=0:
+        x = 100- int(math.sin(abs(rads))*angle_distance[1])
+
+
+    y = 99-int(math.cos(abs(rads))*angle_distance[1])
+    # # x = int(math.sin(angle_distance[0])*angle_distance[1])+100
+    # # y = int(math.cos(angle_distance[0])*angle_distance[1])
     print(angle_distance,x,y)
-    print(angle_distance[1])
-    if angle_distance[1] <= 100:
-        arr[x,y]=angle_distance[1]
+    # print(angle_distance[1])
+    if (angle_distance[1] < 100) and (angle_distance[1]>=0):
+        arr[y,x]=angle_distance[1]
         print(arr)
     count+=1
 
