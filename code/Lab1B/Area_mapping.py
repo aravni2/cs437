@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import math 
 import scipy as sc
+import cv2
 
 # # Ultrasonic
 ANGLE_RANGE = 180
@@ -116,6 +117,7 @@ b = sc.ndimage.binary_dilation(arr,[
     [ 1, 1,  1],
     [0, 1, 0],
 ])
+
 df = pd.DataFrame(b.astype(int))
 df.to_csv('test_pad.csv')
 
