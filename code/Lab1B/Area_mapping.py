@@ -107,7 +107,7 @@ while count <50:
     # print(angle_distance[1])
     if (angle_distance[1] < 100) and (angle_distance[1]>=0):
         # input distance values
-        arr[y,x]=angle_distance[1]
+        # arr[y,x]=angle_distance[1]
         arr[y,x] = 1
         print(arr)
     count+=1
