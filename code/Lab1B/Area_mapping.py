@@ -19,6 +19,10 @@ scan_list = []
 
 errors = []
 
+
+
+
+
 def run_command(cmd=""):
     import subprocess
     p = subprocess.Popen(
@@ -83,55 +87,73 @@ def scan_step(ref):
     else:
         return False
 
+# car positions
+global ang_to_vertical, angle_rel, car_x, car_y
+# absolute value of cars angle to vertical
+ang_to_vertical = 0
+# rotation of last car turn
+angle_rel = 0
+
+car_x = 100
+car_y = 50
+
+target_x = 50
+target_y = 50
+
+def scan_area():
+    fc.servo.set_angle(0)
+    time.sleep(1)
+    arr = np.zeros((100,200))
+    print(arr)
+    count = 0
+    while count <100:
+        distance = scan_step(35)
+        rads = (angle_distance[0]* math.pi)/180
+        print(rads)
+        if angle_distance[0] <0:
+            x_obj = int(math.sin(abs(rads))*angle_distance[1])+100
+
+        if angle_distance[0] >=0:
+            x_obj = 100- int(math.sin(abs(rads))*angle_distance[1])
 
 
+        y_obj = 99-int(math.cos(abs(rads))*angle_distance[1])
 
-fc.servo.set_angle(0)
-time.sleep(1)
-arr = np.zeros((100,200))
-print(arr)
-count = 0
-while count <100:
-    distance = scan_step(35)
-    rads = (angle_distance[0]* math.pi)/180
-    print(rads)
-    if angle_distance[0] <0:
-        x = int(math.sin(abs(rads))*angle_distance[1])+100
+        x_obj,y_obj = rotate_transform(angle_to_vert,rel_angle, car_x,car_y,x_obj,y_obj)
+        print(angle_distance,x,y)
+        # print(angle_distance[1])
+        if (angle_distance[1] < 100) and (angle_distance[1]>=0):
+            # input distance values
+            # arr[y,x]=angle_distance[1]
+            arr[y,x] = 1
+            print(arr)
+        count+=1
+    b = sc.ndimage.binary_dilation(arr,[
+        [1, 1, 1],
+        [ 1, 1,  1],
+        [1, 1, 1],
+    ])
+    c = sc.ndimage.binary_erosion(b,[
+        [0, 1, 0],
+        [ 1, 1,  1],
+        [0, 1, 0],
+    ])
+    # test regular array
+    df= pd.DataFrame(arr)
+    df.to_csv('test.csv')
 
-    if angle_distance[0] >=0:
-        x = 100- int(math.sin(abs(rads))*angle_distance[1])
+    # test dilation/padding
+    df = pd.DataFrame(b.astype(int))
+    df.to_csv('test_pad.csv')
+
+    # test erosion
+    df = pd.DataFrame(c.astype(int))
+    df.to_csv('test_contour.csv')
 
 
-    y = 99-int(math.cos(abs(rads))*angle_distance[1])
-    # # x = int(math.sin(angle_distance[0])*angle_distance[1])+100
-    # # y = int(math.cos(angle_distance[0])*angle_distance[1])
-    print(angle_distance,x,y)
-    # print(angle_distance[1])
-    if (angle_distance[1] < 100) and (angle_distance[1]>=0):
-        # input distance values
-        # arr[y,x]=angle_distance[1]
-        arr[y,x] = 1
-        print(arr)
-    count+=1
-b = sc.ndimage.binary_dilation(arr,[
-    [1, 1, 1],
-    [ 1, 1,  1],
-    [1, 1, 1],
-])
-c = sc.ndimage.binary_erosion(b,[
-    [0, 1, 0],
-    [ 1, 1,  1],
-    [0, 1, 0],
-])
-# test regular array
-df= pd.DataFrame(arr)
-df.to_csv('test.csv')
+def rotate_transform(angle_to_vert,rel_angle, car_x,car_y,x_obj,y_obj):
+    rot_angle = angle_to_vert+rel_angle
+    x_new = x_obj*cos(rot_angle) - y_obj*sin(rot_angle)+car_x
+    y_new = x_obj*sin(rot_angle) + x_obj*cos(rot_angle)+car_y
 
-# test dilation/padding
-df = pd.DataFrame(b.astype(int))
-df.to_csv('test_pad.csv')
-
-# test erosion
-df = pd.DataFrame(c.astype(int))
-df.to_csv('test_contour.csv')
-
+    return x_new,y_new
