@@ -87,12 +87,14 @@ def scan_step(ref):
     else:
         return False
 
-# car positions
+# car positions /////////////////////////
 global ang_to_vertical, angle_rel, car_x, car_y
+
 # absolute value of cars angle to vertical
+
 ang_to_vertical = math.pi/2
 # rotation of last car turn
-angle_rel = math.pi/2
+angle_rel = 0
 
 car_x = 0
 car_y = 50
@@ -164,11 +166,11 @@ def scan_area():
     df.to_csv('test_contour.csv')
 
 
-def rotate_transform(ang_to_vertical,rel_angle, car_x,car_y,x_obj,y_obj):
-    rot_angle = ang_to_vertical+rel_angle
+def rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj):
+    rot_angle = ang_to_vertical+angle_rel
     print("rot_angle", rot_angle)
     x_new =int( x_obj*math.cos(rot_angle) - y_obj*math.sin(rot_angle))
-    y_new =int( x_obj*math.sin(rot_angle) + x_obj*math.cos(rot_angle))
+    y_new =int( x_obj*math.sin(rot_angle) + y_obj*math.cos(rot_angle))
 
     print("rotate x,y:", (x_new,y_new))
     x_new= x_new +car_x
