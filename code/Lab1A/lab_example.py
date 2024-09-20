@@ -4,10 +4,10 @@ import time
 def move25():
     speed4 = fc.Speed(25)
     speed4.start()
-    fc.backward(100)
+    fc.forward(100)
     x=0
-    for i in range(2):
-        time.sleep(.5)
+    for i in range(1):
+        time.sleep(1.754)
         speed=speed4()
         x+=speed*1
         print(f"{speed}mm/s")
