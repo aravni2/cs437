@@ -119,13 +119,13 @@ def scan_area():
 
         y_obj = 99-int(math.cos(abs(rads))*angle_distance[1])
 
-        x_obj,y_obj = rotate_transform(angle_to_vert,rel_angle, car_x,car_y,x_obj,y_obj)
-        print(angle_distance,x,y)
+        x_obj,y_obj = rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj)
+        print(angle_distance,x_obj,y_obj)
         # print(angle_distance[1])
         if (angle_distance[1] < 100) and (angle_distance[1]>=0):
             # input distance values
             # arr[y,x]=angle_distance[1]
-            arr[y,x] = 1
+            arr[y_obj,x_obj] = 1
             print(arr)
         count+=1
     b = sc.ndimage.binary_dilation(arr,[
