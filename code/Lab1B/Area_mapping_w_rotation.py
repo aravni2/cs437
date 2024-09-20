@@ -111,7 +111,7 @@ def scan_area():
     while count <100:
         distance = scan_step(35)
         rads = (angle_distance[0]* math.pi)/180
-        print(rads)
+        print("angle of read:",rads)
 
         x_obj = int(math.cos(abs(rads))*angle_distance[1])
         y_obj = int(math.sin(abs(rads))*angle_distance[1])
