@@ -8,7 +8,7 @@ import picar_4wd as fc
 
 # print (end_time-start_time)
 
-
+start_time = time.time()
 while (end_time-start_time)<=4:
     fc.forward(25)
     end_time= time.time()
