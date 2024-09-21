@@ -1,6 +1,11 @@
 import picar_4wd as fc
 import time
 
+# test straight 
+
+
+
+
 # test 360 for calibration
 # fc.turn_left(70)
 # time.sleep(5)
@@ -35,15 +40,15 @@ import time
 
 
 # # test 90
-fc.turn_left(70)
-time.sleep(5/4)
-fc.stop()
+# fc.turn_left(70)
+# time.sleep(5/4)
+# fc.stop()
 
 
-time.sleep(1)
+# time.sleep(1)
 
-fc.turn_right(70)
-time.sleep(5/4)
-fc.stop()
+# fc.turn_right(70)
+# time.sleep(5/4)
+# fc.stop()
 
 
