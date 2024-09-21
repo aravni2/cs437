@@ -88,13 +88,13 @@ def scan_step(ref):
         return False
 
 # car positions /////////////////////////
-global ang_to_vertical, angle_rel, car_x, car_y
+global ang_to_vertical, angle_rel, car_x, car_y, arr
 
 # absolute value of cars angle to vertical
 
 ang_to_vertical = math.pi/2
 # rotation of last car turn
-angle_rel = 0
+angle_rel = math.pi/2
 
 car_x = 0
 car_y = 50
@@ -102,10 +102,13 @@ car_y = 50
 target_x = 50
 target_y = 50
 
+arr = np.zeros((100,200))
+car_y_offset = 100
+car_x_offset=100
+
 def scan_area():
     fc.servo.set_angle(0)
     time.sleep(1)
-    arr = np.zeros((100,200))
     print(arr)
     count = 0
     while count <100:
@@ -113,12 +116,12 @@ def scan_area():
         rads = (angle_distance[0]* math.pi)/180
         print("angle of read:",rads)
 
-        x_obj = int(math.cos(abs(rads))*angle_distance[1])
-        y_obj = int(math.sin(abs(rads))*angle_distance[1])
+        x_obj = int(math.cos(rads)*angle_distance[1])
+        y_obj = int(math.sin(rads)*angle_distance[1])
 
 
-        print("original angle:", angle_distance)
-        print("original x,y:", [x_obj,y_obj])
+        print("local:", angle_distance)
+        print("local x,y:", [x_obj,y_obj])
         
         # find new location of objects relative to cars position and angle
         x_rt,y_rt = rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj)
@@ -126,13 +129,13 @@ def scan_area():
         
         print(angle_distance,x_rt,y_rt)
 
-        if angle_distance[0] <0:
-            x_pos = 100+ x_rt
+        # if angle_distance[0] <0:
+        #     x_pos = 100+ x_rt
 
-        if angle_distance[0] >=0:
-            x_pos = 100- x_rt
+        # if angle_distance[0] >=0:
+        #     x_pos = 100- x_rt
 
-
+        x_pos = car_x_offset+x_rt
         y_pos = 99-y_rt
 
         print("x,y new" ,x_pos,y_pos)        
