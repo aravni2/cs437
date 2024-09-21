@@ -102,6 +102,8 @@ car_y = 1000
 target_x = 50
 target_y = 50
 
+speed = 2.25/100
+dist=50
 
 arr_x = 2001
 arr_y = 1001
@@ -185,4 +187,22 @@ def rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj):
 
     return x_new,y_new
 
+scan_area()
+
+fc.forward(70)
+time.sleep(speed*dist)
+fc.stop()
+car_y =car_y-dist
+print(car_x,car_y)
+scan_area()
+fc.turn_right(70)
+time.sleep(3/4)
+fc.stop()
+
+fc.forward(70)
+time.sleep(speed*dist)
+fc.stop()
+car_x= car_x+dist
+print(car_x,car_y)
+ang_to_vertical=0
 scan_area()
