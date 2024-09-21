@@ -88,23 +88,28 @@ def scan_step(ref):
         return False
 
 # car positions /////////////////////////
-global ang_to_vertical, angle_rel, car_x, car_y, arr
+global ang_to_vertical, angle_rel, car_x, car_y, arr,arr_x,arr_y
 
 # absolute value of cars angle to vertical
 
 ang_to_vertical = math.pi/2
 # rotation of last car turn
-angle_rel = math.pi/2
+angle_rel = 0
 
-car_x = 0
-car_y = 50
+car_x = 1000
+car_y = 1000
 
 target_x = 50
 target_y = 50
 
-arr = np.zeros((100,200))
-car_y_offset = 100
-car_x_offset=100
+
+arr_x = 2001
+arr_y = 1001
+arr = np.zeros((arr_y,arr_x))
+
+def plot_points(arr,x_pos,y_pos):
+    if (angle_distance[1] < 100) and (angle_distance[1]>=0):
+            arr[y_pos,x_pos] = 1
 
 def scan_area():
     fc.servo.set_angle(0)
@@ -135,16 +140,14 @@ def scan_area():
         # if angle_distance[0] >=0:
         #     x_pos = 100- x_rt
 
-        x_pos = car_x_offset+x_rt
-        y_pos = 99-y_rt
+        x_pos = car_x+x_rt
+        y_pos = car_y-y_rt
 
         print("x,y new" ,x_pos,y_pos)        
 
-        if (angle_distance[1] < 100) and (angle_distance[1]>=0):
-            # input distance values
-            # arr[y,x]=angle_distance[1]
-            arr[y_pos,x_pos] = 1
-            # print(arr)
+        # plot coordinates on large array
+        plot_points(arr,x_pos,y_pos)
+
         count+=1
     b = sc.ndimage.binary_dilation(arr,[
         [1, 1, 1],
@@ -176,9 +179,9 @@ def rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj):
     y_new =int( x_obj*math.sin(rot_angle) + y_obj*math.cos(rot_angle))
 
     print("rotate x,y:", (x_new,y_new))
-    x_new= x_new +car_x
-    y_new = y_new +car_y
-    print("transform x,y:", (x_new,y_new))
+    # x_new= x_new +car_x
+    # y_new = y_new +car_y
+    # print("transform x,y:", (x_new,y_new))
 
     return x_new,y_new
 
