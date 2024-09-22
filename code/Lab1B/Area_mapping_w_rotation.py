@@ -7,7 +7,6 @@ import scipy as sc
 import cv2
 from tflite_runtime import interpreter
 
-interpreter.Interpreter()
 # # Ultrasonic
 ANGLE_RANGE = 180
 STEP = 9
@@ -21,7 +20,8 @@ scan_list = []
 errors = []
 
 # car positions /////////////////////////
-global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y,turn_time_per_rad,speed,dist, dist_to_target, scan_count
+global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y,turn_time_per_rad,speed,dist
+global dist_to_target, scan_count
 
 # absolute value of cars angle to vertical (starts facing 90)
 facing_angle = math.pi/2
@@ -42,7 +42,8 @@ dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
 print(dist_to_target)
 
 # calibrated values (carpeting)
-turn_time_per_rad = 3.1/(math.pi*2)
+# 3.1 carpet, 2.5 hardwood
+turn_time_per_rad = 2.5/(math.pi*2)
 speed = 2.25/100
 dist=50
 scan_count = 0
@@ -52,15 +53,19 @@ arr_x = 2001
 arr_y = 501
 arr = np.zeros((arr_y,arr_x))
 
-def turn_right_90(facing_angle):
+def turn_right_90():
+    global facing_angle
     fc.turn_right(70)
     time.sleep(turn_time_per_rad*(math.pi/2))
-    facing_angle -=math.pi/2
+    fc.stop()
+    facing_angle -= math.pi/2
     scan_area()
 
-def turn_left_90(facing_angle):
-    fc.turn_right(70)
+def turn_left_90():
+    global facing_angle
+    fc.turn_left(70)
     time.sleep(turn_time_per_rad*(math.pi/2))
+    fc.stop()
     facing_angle +=math.pi/2
     scan_area()
 
@@ -73,6 +78,7 @@ def forward(dist):
     print("car position:", (car_x,car_y))
 
 def update_pos(dist):
+    global car_x,car_y,target_x,target_y,dist_to_target
     if facing_angle == 0:
         car_x += dist
     if facing_angle == math.pi/2:
@@ -147,11 +153,12 @@ def scan_step(ref):
         return False
 
 
-def plot_points(arr,x_pos,y_pos,scan_count):
-    if (angle_distance[1] < 100) and (angle_distance[1]>=0):
+def plot_points(arr,x_pos,y_pos):
+    if (angle_distance[1] < 150) and (angle_distance[1]>=0):
             arr[y_pos,x_pos] = scan_count
 
 def scan_area():
+    global scan_count
     scan_count+=1
     fc.servo.set_angle(0)
     time.sleep(1)
@@ -163,15 +170,15 @@ def scan_area():
         distance = scan_step(35)
         # convert angles to radians
         rads = (angle_distance[0]* math.pi)/180
-        print("angle of read:",rads)
+        # print("angle of read:",rads)
 
         # get x and y points from distance  and angle
         x_obj = int(math.cos(rads)*angle_distance[1])
         y_obj = int(math.sin(rads)*angle_distance[1])
 
 
-        print("local:", angle_distance)
-        print("local x,y:", [x_obj,y_obj])
+        # print("local:", angle_distance)
+        # print("local x,y:", [x_obj,y_obj])
         
         # find new location of objects relative to cars position and angle
         x_rt,y_rt = rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj)
@@ -191,7 +198,7 @@ def scan_area():
         print("x,y new" ,x_pos,y_pos)        
 
         # plot coordinates on large array
-        plot_points(arr,x_pos,y_pos,scan_count)
+        plot_points(arr,x_pos,y_pos)
 
 
 def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
@@ -207,12 +214,16 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
     return x_new,y_new
 
-
-scan_area(1)
+# testing
+scan_area()
 
 forward(dist)
-turn_right_90(facing_angle)
+time.sleep(1)
+turn_right_90()
 forward(dist)
+turn_left_90()
+forward(dist)
+turn_right_90()
 
 
 b = sc.ndimage.binary_dilation(arr,[
