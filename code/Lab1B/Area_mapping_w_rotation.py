@@ -9,7 +9,7 @@ from tflite_runtime import interpreter
 
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 5
+STEP = 1
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -164,7 +164,7 @@ def scan_area():
     time.sleep(1)
     print(arr)
     
-    for _ in range(100):
+    for _ in range(290):
 
         # scan local distances from ultrasonic sensor
         distance = scan_step(35)
