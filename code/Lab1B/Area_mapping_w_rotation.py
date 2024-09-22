@@ -49,14 +49,14 @@ turn_time_per_rad = 2.35/(math.pi*2)
 # speed = 2.25/100
 # hardwood speed at 70 power
 speed = 2.15/100
-dist=50
+dist=10
 scan_count = 0
 
 
 arr_x = 2001
 arr_y = 501
 arr = np.zeros((arr_y,arr_x))
-
+astar_arr= []
 def turn_right_90():
     global facing_angle
     fc.turn_right(70)
@@ -87,10 +87,62 @@ def update_pos(dist):
         car_x += dist
     if facing_angle == math.pi/2:
         car_y -= dist
-    if facing_angle == (math.pi*(3/2)):
+    if facing_angle == (math.pi):
         car_x -= dist
+    if facing_angle == (math.pi*(3/2)):
+        car_y += dist
     dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
     print(dist_to_target)
+
+
+def navigate_astar(astar_arr):
+    global facing_angle
+    for point in astar_arr:
+        # if facing NORTH
+        if facing_angle == math.pi/2:
+            # if forward
+            if ((car_y > point[0]) and (car_x==point[1])):
+                forward(10)
+            # turning right
+            if ((car_y==point[0]) and (car_x < point[1])):
+                turn_right_90()
+            if ((car_y==point[0]) and (car_x > point[1])):
+                turn_left_90()
+        # if facing EAST
+        if facing_angle == 0:
+            # if forward
+            if ((car_y == point[0]) and (car_x < point[1])):
+                forward(10)
+            # turning right
+            if ((car_y < point[0]) and (car_x == point[1])):
+                turn_right_90()
+            # turn left
+            if ((car_y > point[0]) and (car_x == point[1])):
+                turn_left_90()
+        # if facing WEST
+        if facing_angle == (math.pi):
+            # if forward
+            if ((car_y == point[0]) and (car_x > point[1])):
+                forward(10)
+            # turning right
+            if (car_y > point[0]) and (car_x == point[1]):
+                turn_right_90()
+            # turn left
+            if (car_y < point[0]) and (car_x == point[1]):
+                turn_left_90()
+        # if facing SOUTH
+        if facing_angle == (math.pi*(3/2)):
+             # if forward
+            if ((car_y < point[0]) and (car_x==point[1])):
+                forward(10)
+            # turning right
+            if ((car_y==point[0]) and (car_x > point[1])):
+                turn_right_90()
+            if (car_y==point[0]) and (car_x < point[1]):
+                turn_left_90()
+            
+            
+
 
 def run_command(cmd=""):
     import subprocess

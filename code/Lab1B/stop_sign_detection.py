@@ -10,6 +10,7 @@ import time
 import threading
 import readchar
 import os
+import tflite_runtime
 
 #insert here for your own device, controlling the traversal control
 # from picarx import Picarx
@@ -32,23 +33,23 @@ start_time = monotonic_ns()
 traffic_sign_detection_bool=False
 take_photo_counter=0
 
-def take_photo():
-    _time = strftime('%Y-%m-%d-%H-%M-%S',localtime(time()))
-    name = 'photo_%s'%_time
-    username = os.getlogin()
+# def take_photo():
+#     _time = strftime('%Y-%m-%d-%H-%M-%S',localtime(time()))
+#     name = 'photo_%s'%_time
+#     username = os.getlogin()
 
-    path = f"/home/{username}/Pictures/"
-    Vilib.take_photo(name, path)
-    print('photo save as %s%s.jpg'%(path,name))
+#     path = f"/home/{username}/Pictures/"
+#     Vilib.take_photo(name, path)
+#     print('photo save as %s%s.jpg'%(path,name))
 
 def traffic_sign_detection()->bool:
     global take_photo_counter
-    print('traffic sign detection running')
-    print ('sanity check on traffic sign type: '+ str(Vilib.detect_obj_parameter['traffic_sign_y']))
-    print('traffic sign detection going for if loop')
+    # print('traffic sign detection running')
+    # print ('sanity check on traffic sign type: '+ str(Vilib.detect_obj_parameter['traffic_sign_y']))
+    # print('traffic sign detection going for if loop')
     if ((Vilib.detect_obj_parameter['traffic_sign_acc']!=None) and (Vilib.detect_obj_parameter['traffic_sign_acc']>0)):
         if (take_photo_counter<1 and take_photo_counter>=0):
-            take_photo()
+            # take_photo()
             take_photo_counter=take_photo_counter+1
         traffic_sign_type=Vilib.detect_obj_parameter['traffic_sign_t']
         traffic_sign_coodinate = (Vilib.detect_obj_parameter['traffic_sign_x'],Vilib.detect_obj_parameter['traffic_sign_y'])
@@ -69,18 +70,19 @@ def traffic_sign_detection()->bool:
 
 def PiCarX_STOP_traffic_sign_reaction():
     global POWER
-    print('PiCarX_traffic_sign_reaction executed')
-    fc.stop()
+    print('PiCarX_traffic_sign_reaction executed, stop sign detected')
+    # fc.stop()
+    # time.sleep(5)
     # px.backward(0)
     #wait for 3 seconds due to stop sign
-    time.sleep(3)
+    time.sleep(5)
     #go until STOP sign cleared
-    while traffic_sign_detection()==True:
-        print('detected')
-        time.sleep(1)
-        fc.forward(0)
-        fc.stop()
-    print('PiCarX_traffic_sign_reaction execution completed, going back to main loop')
+    # while traffic_sign_detection()==True:
+    #     print('detected')
+    #     # fc.stop()
+    #     time.sleep(5)
+    #     print('reset_detection')
+    # print('PiCarX_traffic_sign_reaction execution completed, going back to main loop')
 
 def PiCarX_normal_actions():
     print('PiCarX_normal_actions executed')
@@ -100,10 +102,25 @@ def main():
 
     #main loop, for both traffic sign detection and Path finding
     while True:
-        print('main full self driving loop running!!!')
+        '''
+        scan()
+        plot()
+        astar()
+        iterate array 
+        if turn()
+            ...
+        if forward()
+            stop_detection
+            forward():
+                while:
+                    
+        
+        
+        '''
+        # print('main full self driving loop running!!!')
         current_time = monotonic_ns()
-        time_elapsed=(current_time-start_time)/1000000000
-        print ('time elapsed in seconds: ', str(time_elapsed))
+        # time_elapsed=(current_time-start_time)/1000000000
+        # print ('time elapsed in seconds: ', str(time_elapsed))
 
         #traffic detection logic
         traffic_sign_detection_bool=traffic_sign_detection()
@@ -112,10 +129,18 @@ def main():
         if traffic_sign_detection_bool==True:
             PiCarX_STOP_traffic_sign_reaction();
             #let the car take a breather
-            time.sleep(15)
+            # time.sleep(15)
         
         if traffic_sign_detection_bool==False:
-            PiCarX_normal_actions();
+            pass
+            # PiCarX_normal_actions();
+            '''
+            scan
+            plot
+            astar
+            move
+
+            '''
             ###YOUR CODE HERE!!!!
 
 
