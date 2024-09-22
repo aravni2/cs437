@@ -165,9 +165,12 @@ def a_star_search_returnPath(maze,start,end):
 start = (40,100)
 end= (30,103)
 np.set_printoptions(threshold=sys.maxsize)
-a_array= np.genfromtxt('C:/Users/aravn/Desktop/Courses/UIUC/CS437 - Internet of Things/Lab Repo/cs437/test.csv',delimiter=',').astype(int)
-print (a_array.shape)
-x =a_star_search_returnMap(a_array,start,end)
-
+a_array= np.genfromtxt('/home/pi/cs437/test.csv',delimiter=',').astype(bool)
 print(a_array)
-print(x)
+a_array = (~a_array).astype(int)
+print (a_array.shape)
+maze =a_star_search_returnMap(a_array,start,end)
+
+# maze=np.asarray(a_array).astype(int)
+# print (maze)
+np.savetxt("maze.csv", maze.astype(int), fmt='%s', delimiter=",")

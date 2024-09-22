@@ -211,7 +211,8 @@ def scan_step(ref):
 
 def plot_points(arr,x_pos,y_pos):
     if (angle_distance[1] < 150) and (angle_distance[1]>=0):
-            arr[y_pos,x_pos] = scan_count
+            # arr[y_pos,x_pos] = scan_count
+            arr[y_pos,x_pos] = 1
 
 def scan_area():
     global scan_count
