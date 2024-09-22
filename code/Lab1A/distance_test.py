@@ -1,7 +1,7 @@
 import time
 import picar_4wd as fc
 
-start_time = time.time()
+# start_time = time.time()
 # # fc.forward(25)
 # time.sleep(4)
 # def forward(power):
@@ -33,11 +33,15 @@ start_time = time.time()
 #     left_rear.set_power(0)
 #     right_front.set_power(0)
 #     right_rear.set_power(0)
-end_time = 0
-# print (end_time-start_time)
 
+
+
+# end_time = 0
+# # print (end_time-start_time)
+# speed = 2.5/100
+# dist = 10
 # start_time = time.time()
-# while (end_time-start_time)<=2.15:
+# while (end_time-start_time)<=(speed*dist):
 #     fc.forward(70)
 #     end_time= time.time()
 # print(end_time-start_time)
@@ -51,8 +55,8 @@ end_time = 0
 # fc.stop()
 
 # hardwood
-speed = 2.15/100
-dist = 50
+speed = 2.5/100
+dist = 10
 fc.forward(70)
 time.sleep(speed*dist)
 fc.stop()

@@ -32,8 +32,8 @@ facing_dir = 'North'
 angle_rel = 0
 
 # car starting point
-car_x = 1000
-car_y = 400
+car_x = 100
+car_y = 40
 
 # target postion
 target_x = 100
@@ -48,7 +48,7 @@ turn_time_per_rad = 2.35/(math.pi*2)
 # carpet speed at 70 power
 # speed = 2.25/100
 # hardwood speed at 70 power
-speed = 2.15/100
+speed = 2.5/100
 dist=10
 scan_count = 0
 
@@ -84,13 +84,13 @@ def forward(dist):
 def update_pos(dist):
     global car_x,car_y,target_x,target_y,dist_to_target
     if facing_angle == 0:
-        car_x += dist/10
+        car_x += int(dist/10)
     if facing_angle == math.pi/2:
-        car_y -= dist/10
+        car_y -= int(dist/10)
     if facing_angle == (math.pi):
-        car_x -= dist/10
+        car_x -= int(dist/10)
     if facing_angle == (math.pi*(3/2)):
-        car_y += dist/10
+        car_y += int(dist/10)
     dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
     print(dist_to_target)
 
@@ -229,12 +229,12 @@ def scan_area():
         # print("angle of read:",rads)
 
         # get x and y points from distance  and angle, converted to decmeters
-        x_obj = int(math.cos(rads)*angle_distance[1]/10)
-        y_obj = int(math.sin(rads)*angle_distance[1]/10)
+        x_obj = math.ceil(math.cos(rads)*angle_distance[1]/10)
+        y_obj = math.ceil(math.sin(rads)*angle_distance[1]/10)
 
 
-        # print("local:", angle_distance)
-        # print("local x,y:", [x_obj,y_obj])
+        print("local:", angle_distance)
+        print("local x,y:", [x_obj,y_obj])
         
         # find new location of objects relative to cars position and angle
         x_rt,y_rt = rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj)
@@ -272,12 +272,12 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 # testing
 scan_area()
-# arr[car_y,car_x] = 88881
-# forward(dist)
-# time.sleep(1)
-# arr[car_y,car_x] = 88882
-# turn_right_90()
-# forward(dist)
+arr[car_y,car_x] = 88881
+forward(dist)
+time.sleep(1)
+arr[car_y,car_x] = 88882
+turn_right_90()
+forward(dist)
 # arr[car_y,car_x] = 88883
 # time.sleep(1)
 # turn_left_90()
@@ -293,9 +293,9 @@ b = sc.ndimage.binary_dilation(arr,[
     [1, 1, 1],
 ])
 c = sc.ndimage.binary_erosion(b,[
-    [0, 1, 0],
-    [ 1, 1,  1],
-    [0, 1, 0],
+    [1, 1, 1],
+    [ 0, 1,  0],
+    [0, 0, 0],
 ])
 # test regular array
 df= pd.DataFrame(arr)
