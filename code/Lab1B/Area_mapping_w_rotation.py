@@ -216,7 +216,7 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 # testing
 scan_area()
-
+arr[400,1000] = 8888
 # forward(dist)
 # time.sleep(1)
 # turn_right_90()
