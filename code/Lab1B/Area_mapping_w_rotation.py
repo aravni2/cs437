@@ -42,9 +42,13 @@ dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
 print(dist_to_target)
 
 # calibrated values (carpeting)
-# 3.1 carpet, 2.5 hardwood
-turn_time_per_rad = 2.5/(math.pi*2)
-speed = 2.25/100
+# 3.1 carpet, 2.35 hardwood
+turn_time_per_rad = 2.35/(math.pi*2)
+
+# carpet speed at 70 power
+# speed = 2.25/100
+# hardwood speed at 70 power
+speed = 2.15/100
 dist=50
 scan_count = 0
 

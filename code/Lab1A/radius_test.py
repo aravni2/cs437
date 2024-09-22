@@ -8,12 +8,12 @@ import time
 
 # test 360 for calibration
 fc.turn_left(70)
-time.sleep(3)
+time.sleep(2.35)
 fc.stop()
 
 time.sleep(1)
 fc.turn_right(70)
-time.sleep(3)
+time.sleep(2.35)
 fc.stop()
 
 # test 270
