@@ -7,9 +7,10 @@ import scipy as sc
 import cv2
 from tflite_runtime import interpreter
 
+interpreter.Interpreter()
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 5
+STEP = 9
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -52,7 +53,7 @@ def get_distance_at(angle):
     time.sleep(0.04)
     distance = fc.us.get_distance()
     angle_distance = [angle, distance]
-    print(distance)
+    # print(distance)
     return distance
 
 def get_status_at(angle, ref1=35, ref2=10):
@@ -88,40 +89,48 @@ def scan_step(ref):
         return False
 
 # car positions /////////////////////////
-global ang_to_vertical, angle_rel, car_x, car_y, arr,arr_x,arr_y
+global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y
 
-# absolute value of cars angle to vertical
+# absolute value of cars angle to vertical (starts facing 90)
+facing_angle = math.pi/2
 
-ang_to_vertical = math.pi/2
+
 # rotation of last car turn
+
+
 angle_rel = 0
 
+# car starting point
 car_x = 1000
-car_y = 1000
+car_y = 400
 
-target_x = 50
-target_y = 50
+target_x = 100
+target_y = 200
 
 speed = 2.25/100
 dist=50
 
 arr_x = 2001
-arr_y = 1001
+arr_y = 501
 arr = np.zeros((arr_y,arr_x))
 
-def plot_points(arr,x_pos,y_pos):
+def plot_points(arr,x_pos,y_pos,num):
     if (angle_distance[1] < 100) and (angle_distance[1]>=0):
-            arr[y_pos,x_pos] = 1
+            arr[y_pos,x_pos] = num
 
-def scan_area():
+def scan_area(num):
     fc.servo.set_angle(0)
     time.sleep(1)
     print(arr)
-    count = 0
-    while count <100:
+    
+    for _ in range(100):
+
+        # scan local distances from ultrasonic sensor
         distance = scan_step(35)
+        # convert angles to radians
         rads = (angle_distance[0]* math.pi)/180
         print("angle of read:",rads)
+
 
         x_obj = int(math.cos(rads)*angle_distance[1])
         y_obj = int(math.sin(rads)*angle_distance[1])
@@ -131,7 +140,7 @@ def scan_area():
         print("local x,y:", [x_obj,y_obj])
         
         # find new location of objects relative to cars position and angle
-        x_rt,y_rt = rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj)
+        x_rt,y_rt = rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj)
 
         
         print(angle_distance,x_rt,y_rt)
@@ -148,34 +157,11 @@ def scan_area():
         print("x,y new" ,x_pos,y_pos)        
 
         # plot coordinates on large array
-        plot_points(arr,x_pos,y_pos)
-
-        count+=1
-    b = sc.ndimage.binary_dilation(arr,[
-        [1, 1, 1],
-        [ 1, 1,  1],
-        [1, 1, 1],
-    ])
-    c = sc.ndimage.binary_erosion(b,[
-        [0, 1, 0],
-        [ 1, 1,  1],
-        [0, 1, 0],
-    ])
-    # test regular array
-    df= pd.DataFrame(arr)
-    df.to_csv('test.csv')
-
-    # test dilation/padding
-    df = pd.DataFrame(b.astype(int))
-    df.to_csv('test_pad.csv')
-
-    # test erosion
-    df = pd.DataFrame(c.astype(int))
-    df.to_csv('test_contour.csv')
+        plot_points(arr,x_pos,y_pos,num)
 
 
-def rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj):
-    rot_angle = ang_to_vertical+angle_rel
+def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
+    rot_angle = facing_angle+angle_rel
     print("rot_angle", rot_angle)
     x_new =int( x_obj*math.cos(rot_angle) - y_obj*math.sin(rot_angle))
     y_new =int( x_obj*math.sin(rot_angle) + y_obj*math.cos(rot_angle))
@@ -187,16 +173,17 @@ def rotate_transform(ang_to_vertical,angle_rel, car_x,car_y,x_obj,y_obj):
 
     return x_new,y_new
 
-scan_area()
+
+scan_area(1)
 
 fc.forward(70)
 time.sleep(speed*dist)
 fc.stop()
 car_y =car_y-dist
-print(car_x,car_y)
-scan_area()
+print("car plot",car_x,car_y)
+scan_area(2)
 fc.turn_right(70)
-time.sleep(3/4)
+time.sleep(3/4.2)
 fc.stop()
 
 fc.forward(70)
@@ -204,5 +191,29 @@ time.sleep(speed*dist)
 fc.stop()
 car_x= car_x+dist
 print(car_x,car_y)
-ang_to_vertical=0
-scan_area()
+facing_angle=0
+scan_area(3)
+print("car plot",car_x,car_y)
+
+
+b = sc.ndimage.binary_dilation(arr,[
+    [1, 1, 1],
+    [ 1, 1,  1],
+    [1, 1, 1],
+])
+c = sc.ndimage.binary_erosion(b,[
+    [0, 1, 0],
+    [ 1, 1,  1],
+    [0, 1, 0],
+])
+# test regular array
+df= pd.DataFrame(arr)
+df.to_csv('test.csv')
+
+# test dilation/padding
+df = pd.DataFrame(b.astype(int))
+df.to_csv('test_pad.csv')
+
+# test erosion
+df = pd.DataFrame(c.astype(int))
+df.to_csv('test_contour.csv')
