@@ -216,14 +216,19 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 # testing
 scan_area()
-arr[400,1000] = 8888
-# forward(dist)
-# time.sleep(1)
-# turn_right_90()
-# forward(dist)
-# turn_left_90()
-# forward(dist)
-# turn_right_90()
+arr[car_y,car_x] = 88881
+forward(dist)
+time.sleep(1)
+arr[car_y,car_x] = 88882
+turn_right_90()
+forward(dist)
+arr[car_y,car_x] = 88883
+time.sleep(1)
+turn_left_90()
+forward(dist)
+arr[car_y,car_x] = 88884
+time.sleep(1)
+turn_right_90()
 
 
 b = sc.ndimage.binary_dilation(arr,[
