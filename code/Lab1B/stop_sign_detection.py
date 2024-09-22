@@ -112,7 +112,7 @@ def main():
         if traffic_sign_detection_bool==True:
             PiCarX_STOP_traffic_sign_reaction();
             #let the car take a breather
-            time.sleep(1)
+            time.sleep(15)
         
         if traffic_sign_detection_bool==False:
             PiCarX_normal_actions();
