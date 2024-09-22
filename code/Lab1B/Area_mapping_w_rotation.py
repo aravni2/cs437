@@ -9,7 +9,7 @@ from tflite_runtime import interpreter
 
 # # Ultrasonic
 ANGLE_RANGE = 180
-STEP = 9
+STEP = 5
 us_step = STEP
 angle_distance = [0,0]
 current_angle = 0
@@ -217,13 +217,13 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 # testing
 scan_area()
 
-forward(dist)
-time.sleep(1)
-turn_right_90()
-forward(dist)
-turn_left_90()
-forward(dist)
-turn_right_90()
+# forward(dist)
+# time.sleep(1)
+# turn_right_90()
+# forward(dist)
+# turn_left_90()
+# forward(dist)
+# turn_right_90()
 
 
 b = sc.ndimage.binary_dilation(arr,[
