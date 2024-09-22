@@ -56,15 +56,13 @@ def turn_right_90(facing_angle):
     fc.turn_right(70)
     time.sleep(turn_time_per_rad*(math.pi/2))
     facing_angle -=math.pi/2
-    scan_count +=1
-    scan_area(scan_count)
+    scan_area()
 
 def turn_left_90(facing_angle):
     fc.turn_right(70)
     time.sleep(turn_time_per_rad*(math.pi/2))
     facing_angle +=math.pi/2
-    scan_count +=1
-    scan_area(scan_count)
+    scan_area()
 
 
 def forward(dist):
