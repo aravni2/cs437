@@ -272,10 +272,10 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 # testing
 scan_area()
-arr[car_y,car_x] = 88881
+# arr[car_y,car_x] = 88881
 forward(dist)
 time.sleep(1)
-arr[car_y,car_x] = 88882
+# arr[car_y,car_x] = 88882
 turn_right_90()
 forward(dist)
 # arr[car_y,car_x] = 88883
@@ -288,14 +288,12 @@ forward(dist)
 
 
 b = sc.ndimage.binary_dilation(arr,[
-    [1, 1, 1],
-    [ 1, 1,  1],
-    [1, 1, 1],
+    [ 1, 1],
+    [1, 1]
 ])
 c = sc.ndimage.binary_erosion(b,[
-    [1, 1, 1],
-    [ 0, 1,  0],
-    [0, 0, 0],
+    [1, 1],
+    [ 1, 1]
 ])
 # test regular array
 df= pd.DataFrame(arr)
