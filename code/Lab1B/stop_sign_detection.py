@@ -6,6 +6,7 @@ import math
 from pydoc import text
 from vilib import Vilib #adapted and referenced from Sunfounder Vilib library: https://github.com/sunfounder/vilib
 from time import sleep, time, strftime, localtime, monotonic_ns
+import time
 import threading
 import readchar
 import os
@@ -72,7 +73,7 @@ def PiCarX_STOP_traffic_sign_reaction():
     fc.stop()
     # px.backward(0)
     #wait for 3 seconds due to stop sign
-    sleep(3)
+    time.sleep(3)
     #go until STOP sign cleared
     while traffic_sign_detection()==True:
         print('detected')
@@ -94,7 +95,7 @@ def main():
     Vilib.traffic_detect_switch(True)
 
     #let the hardware warm up for 1 sec
-    sleep(1)
+    time.sleep(1)
 
 
     #main loop, for both traffic sign detection and Path finding
@@ -111,7 +112,7 @@ def main():
         if traffic_sign_detection_bool==True:
             PiCarX_STOP_traffic_sign_reaction();
             #let the car take a breather
-            sleep(1)
+            time.sleep(1)
         
         if traffic_sign_detection_bool==False:
             PiCarX_normal_actions();
