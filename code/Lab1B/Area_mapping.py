@@ -115,7 +115,7 @@ while count <100:
         print(arr)
     count+=1
 b = sc.ndimage.binary_dilation(arr,[
-    [1, 1, 1],
+    [0, 0, 0],
     [ 1, 1,  1],
     [1, 1, 1],
 ])

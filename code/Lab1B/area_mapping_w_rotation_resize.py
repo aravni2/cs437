@@ -55,7 +55,7 @@ scan_count = 0
 
 arr_x = 200
 arr_y = 50
-arr = np.zeros((arr_y,arr_x))
+arr = np.zeros((arr_y,arr_x)).astype(int)
 astar_arr= []
 def turn_right_90():
     global facing_angle
@@ -218,7 +218,7 @@ def scan_area():
     scan_count+=1
     fc.servo.set_angle(0)
     time.sleep(1)
-    print(arr)
+    # print(arr)
     
     for _ in range(290):
 
