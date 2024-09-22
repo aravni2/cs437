@@ -20,9 +20,69 @@ scan_list = []
 
 errors = []
 
+# car positions /////////////////////////
+global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y,turn_time_per_rad,speed,dist, dist_to_target, scan_count
+
+# absolute value of cars angle to vertical (starts facing 90)
+facing_angle = math.pi/2
+facing_dir = 'North'
 
 
+# rotation of last car turn
+angle_rel = 0
 
+# car starting point
+car_x = 1000
+car_y = 400
+
+# target postion
+target_x = 100
+target_y = 200
+dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
+print(dist_to_target)
+
+# calibrated values (carpeting)
+turn_time_per_rad = 3.1/(math.pi*2)
+speed = 2.25/100
+dist=50
+scan_count = 0
+
+
+arr_x = 2001
+arr_y = 501
+arr = np.zeros((arr_y,arr_x))
+
+def turn_right_90(facing_angle):
+    fc.turn_right(70)
+    time.sleep(turn_time_per_rad*(math.pi/2))
+    facing_angle -=math.pi/2
+    scan_count +=1
+    scan_area(scan_count)
+
+def turn_left_90(facing_angle):
+    fc.turn_right(70)
+    time.sleep(turn_time_per_rad*(math.pi/2))
+    facing_angle +=math.pi/2
+    scan_count +=1
+    scan_area(scan_count)
+
+
+def forward(dist):
+    fc.forward(70)
+    time.sleep(speed*dist)
+    fc.stop()
+    update_pos(dist)
+    print("car position:", (car_x,car_y))
+
+def update_pos(dist):
+    if facing_angle == 0:
+        car_x += dist
+    if facing_angle == math.pi/2:
+        car_y -= dist
+    if facing_angle == (math.pi*(3/2)):
+        car_x -= dist
+    dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
+    print(dist_to_target)
 
 def run_command(cmd=""):
     import subprocess
@@ -88,37 +148,13 @@ def scan_step(ref):
     else:
         return False
 
-# car positions /////////////////////////
-global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y
 
-# absolute value of cars angle to vertical (starts facing 90)
-facing_angle = math.pi/2
-
-
-# rotation of last car turn
-
-
-angle_rel = 0
-
-# car starting point
-car_x = 1000
-car_y = 400
-
-target_x = 100
-target_y = 200
-
-speed = 2.25/100
-dist=50
-
-arr_x = 2001
-arr_y = 501
-arr = np.zeros((arr_y,arr_x))
-
-def plot_points(arr,x_pos,y_pos,num):
+def plot_points(arr,x_pos,y_pos,scan_count):
     if (angle_distance[1] < 100) and (angle_distance[1]>=0):
-            arr[y_pos,x_pos] = num
+            arr[y_pos,x_pos] = scan_count
 
-def scan_area(num):
+def scan_area():
+    scan_count+=1
     fc.servo.set_angle(0)
     time.sleep(1)
     print(arr)
@@ -131,7 +167,7 @@ def scan_area(num):
         rads = (angle_distance[0]* math.pi)/180
         print("angle of read:",rads)
 
-
+        # get x and y points from distance  and angle
         x_obj = int(math.cos(rads)*angle_distance[1])
         y_obj = int(math.sin(rads)*angle_distance[1])
 
@@ -157,7 +193,7 @@ def scan_area(num):
         print("x,y new" ,x_pos,y_pos)        
 
         # plot coordinates on large array
-        plot_points(arr,x_pos,y_pos,num)
+        plot_points(arr,x_pos,y_pos,scan_count)
 
 
 def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
@@ -176,24 +212,9 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 scan_area(1)
 
-fc.forward(70)
-time.sleep(speed*dist)
-fc.stop()
-car_y =car_y-dist
-print("car plot",car_x,car_y)
-scan_area(2)
-fc.turn_right(70)
-time.sleep(3/4.2)
-fc.stop()
-
-fc.forward(70)
-time.sleep(speed*dist)
-fc.stop()
-car_x= car_x+dist
-print(car_x,car_y)
-facing_angle=0
-scan_area(3)
-print("car plot",car_x,car_y)
+forward(dist)
+turn_right_90(facing_angle)
+forward(dist)
 
 
 b = sc.ndimage.binary_dilation(arr,[
