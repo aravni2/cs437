@@ -11,7 +11,7 @@ import stop_sign_detection as ssd
 import vilib
 
 # # Ultrasonic
-ANGLE_RANGE = 180
+ANGLE_RANGE = 140
 STEP = 1
 us_step = STEP
 angle_distance = [0,0]
