@@ -152,6 +152,7 @@ def a_star_search_returnMap(maze,start,end):
     return maze
 
 def a_star_search_returnPath(maze,start,end):
+
     print('a star search computing')
     #ensure maze is in int type
     maze=(maze).astype(int)

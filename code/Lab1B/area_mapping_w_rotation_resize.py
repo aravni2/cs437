@@ -8,6 +8,7 @@ import cv2
 from tflite_runtime import interprete
 from a_star_utils import a_star_search_returnPath
 import stop_sign_detection as ssd
+import vilib
 
 # # Ultrasonic
 ANGLE_RANGE = 180
@@ -57,7 +58,7 @@ scan_count = 0
 
 arr_x = 200
 arr_y = 50
-arr = np.zeros((arr_y,arr_x)).astype(int)
+arr = np.zeros((arr_y,arr_x)).astype(bool)
 
 def turn_right_90():
     global facing_angle
@@ -286,6 +287,8 @@ print('main full self driving loop running!!!')
 #     current_time = monotonic_ns()
 scan_area()
 # arr[car_y,car_x] = 88881
+astar_array = arr.astype(bool)
+
 astar_arr = a_star_search_returnPath(arr,(car_y,car_x),(target_y,target_x))
 print(astar_arr)
 
