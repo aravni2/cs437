@@ -80,7 +80,7 @@ def turn_left_90():
 def forward(dist):
     traffic_sign_detection_bool=ssd.traffic_sign_detection()
     if traffic_sign_detection_bool==True:
-        ssd.PiCarX_STOP_traffic_sign_reaction()
+        ssd.PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool)
     fc.forward(70)
     time.sleep(speed*dist)
     fc.stop()
@@ -340,7 +340,7 @@ print('main full self driving loop running!!!')
 # df.to_csv('test_contour.csv')
 # //////////////////////////////
 
-
+scan_count=0
 # #main loop, for both traffic sign detection and Path finding
 while True:
        #initialization for main section
@@ -364,6 +364,17 @@ while True:
         print('main loop traffic_sign_detection loop hit!!!')
         ssd.PiCarX_STOP_traffic_sign_reaction();
 
+    scan_area()
+    scan_count+=1
+    astar_array = arr.astype(bool)
+    astar_array = (~arr).astype(int)
+    
+    astar_arr = a_star_search_returnPath(astar_array,(car_y,car_x),(target_y,target_x))
+    print(astar_arr)
+    maze =a_star_search_returnMap(astar_array,(car_y,car_x),(target_y,target_x))
+    maze=np.asarray(maze).astype(int)
+    np.savetxt(f"maze{scan_count}.csv", maze.astype(int), fmt='%s', delimiter=",")
+    navigate_astar(astar_arr)
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
 #         #This 3 secs is synced with the stop_sleep_time, thus the out of the order variable name
