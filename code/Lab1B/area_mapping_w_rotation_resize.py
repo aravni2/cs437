@@ -5,8 +5,8 @@ import pandas as pd
 import math 
 import scipy as sc
 import cv2
-from tflite_runtime import interprete
-from a_star_utils import a_star_search_returnPath
+from tflite_runtime import interpreter
+from a_star_utils import a_star_search_returnPath,a_star_search_returnMap
 import stop_sign_detection as ssd
 import vilib
 
@@ -39,8 +39,8 @@ car_x = 100
 car_y = 40
 
 # target postion
-target_x = 100
-target_y = 200
+target_x = 105
+target_y = 30
 dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
 print(dist_to_target)
 
@@ -51,7 +51,8 @@ turn_time_per_rad = 2.35/(math.pi*2)
 # carpet speed at 70 power
 # speed = 2.25/100
 # hardwood speed at 70 power
-speed = 2.5/100
+
+speed = 2.15/100
 dist=10
 scan_count = 0
 
@@ -244,14 +245,14 @@ def scan_area():
         y_obj = math.ceil(math.sin(rads)*angle_distance[1]/10)
 
 
-        print("local:", angle_distance)
-        print("local x,y:", [x_obj,y_obj])
+        # print("local:", angle_distance)
+        # print("local x,y:", [x_obj,y_obj])
         
         # find new location of objects relative to cars position and angle
         x_rt,y_rt = rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj)
 
         
-        print(angle_distance,x_rt,y_rt)
+        # print(angle_distance,x_rt,y_rt)
 
         # if angle_distance[0] <0:
         #     x_pos = 100+ x_rt
@@ -288,10 +289,14 @@ print('main full self driving loop running!!!')
 scan_area()
 # arr[car_y,car_x] = 88881
 astar_array = arr.astype(bool)
+astar_array = (~arr).astype(int)
 
-astar_arr = a_star_search_returnPath(arr,(car_y,car_x),(target_y,target_x))
+astar_arr = a_star_search_returnPath(astar_array,(car_y,car_x),(target_y,target_x))
 print(astar_arr)
-
+maze =a_star_search_returnMap(astar_array,(car_y,car_x),(target_y,target_x))
+maze=np.asarray(maze).astype(int)
+np.savetxt("maze.csv", maze.astype(int), fmt='%s', delimiter=",")
+navigate_astar(astar_arr)
 # forward(dist)
 # time.sleep(1)
 # arr[car_y,car_x] = 88882
@@ -327,28 +332,28 @@ df.to_csv('test_pad.csv')
 df = pd.DataFrame(c.astype(int))
 df.to_csv('test_contour.csv')
 
-#main loop, for both traffic sign detection and Path finding
-while True:
-       #initialization for main section
-    global take_photo_counter, start_time
+# #main loop, for both traffic sign detection and Path finding
+# while True:
+#        #initialization for main section
+#     global take_photo_counter, start_time
 
-    #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
-    Vilib.camera_start(vflip=False,hflip=False)
-    Vilib.display(local=True,web=True)
-    Vilib.traffic_detect_switch(True)
-    print('main full self driving loop running!!!')
-    current_time = monotonic_ns()
-    time_elapsed=(current_time-start_time)/1000000000
-    print ('time elapsed in seconds: ', str(time_elapsed))
+#     #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
+#     Vilib.camera_start(vflip=False,hflip=False)
+#     Vilib.display(local=True,web=True)
+#     Vilib.traffic_detect_switch(True)
+#     print('main full self driving loop running!!!')
+#     current_time = monotonic_ns()
+#     time_elapsed=(current_time-start_time)/1000000000
+#     print ('time elapsed in seconds: ', str(time_elapsed))
 
-    #traffic detection logic
-    traffic_sign_detection_bool=ssd.traffic_sign_detection()
+#     #traffic detection logic
+#     traffic_sign_detection_bool=ssd.traffic_sign_detection()
 
-    #traffic_sign_handling, will be running until traffic_sign_cleared
-    if traffic_sign_detection_bool==True:
-        # global stop_sleep_time
-        print('traffic_sign_detection loop hit!!!')
-        ssd.PiCarX_STOP_traffic_sign_reaction();
+#     #traffic_sign_handling, will be running until traffic_sign_cleared
+#     if traffic_sign_detection_bool==True:
+#         # global stop_sleep_time
+#         print('traffic_sign_detection loop hit!!!')
+#         ssd.PiCarX_STOP_traffic_sign_reaction();
 
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
