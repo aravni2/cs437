@@ -5,7 +5,9 @@ import pandas as pd
 import math 
 import scipy as sc
 import cv2
-from tflite_runtime import interpreter
+from tflite_runtime import interprete
+from a_star_utils import a_star_search_returnPath
+import stop_sign_detection as ssd
 
 # # Ultrasonic
 ANGLE_RANGE = 180
@@ -56,14 +58,14 @@ scan_count = 0
 arr_x = 200
 arr_y = 50
 arr = np.zeros((arr_y,arr_x)).astype(int)
-astar_arr= []
+
 def turn_right_90():
     global facing_angle
     fc.turn_right(70)
     time.sleep(turn_time_per_rad*(math.pi/2))
     fc.stop()
     facing_angle -= math.pi/2
-    scan_area()
+
 
 def turn_left_90():
     global facing_angle
@@ -71,7 +73,6 @@ def turn_left_90():
     time.sleep(turn_time_per_rad*(math.pi/2))
     fc.stop()
     facing_angle +=math.pi/2
-    scan_area()
 
 
 def forward(dist):
@@ -106,8 +107,10 @@ def navigate_astar(astar_arr):
             # turning right
             if ((car_y==point[0]) and (car_x < point[1])):
                 turn_right_90()
+                return
             if ((car_y==point[0]) and (car_x > point[1])):
                 turn_left_90()
+                return
         # if facing EAST
         if facing_angle == 0:
             # if forward
@@ -116,9 +119,11 @@ def navigate_astar(astar_arr):
             # turning right
             if ((car_y < point[0]) and (car_x == point[1])):
                 turn_right_90()
+                return
             # turn left
             if ((car_y > point[0]) and (car_x == point[1])):
                 turn_left_90()
+                return
         # if facing WEST
         if facing_angle == (math.pi):
             # if forward
@@ -127,9 +132,11 @@ def navigate_astar(astar_arr):
             # turning right
             if (car_y > point[0]) and (car_x == point[1]):
                 turn_right_90()
+                return
             # turn left
             if (car_y < point[0]) and (car_x == point[1]):
                 turn_left_90()
+                return
         # if facing SOUTH
         if facing_angle == (math.pi*(3/2)):
              # if forward
@@ -138,8 +145,10 @@ def navigate_astar(astar_arr):
             # turning right
             if ((car_y==point[0]) and (car_x > point[1])):
                 turn_right_90()
+                return
             if (car_y==point[0]) and (car_x < point[1]):
                 turn_left_90()
+                return
             
             
 
@@ -271,13 +280,19 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
     return x_new,y_new
 
 # testing
+
+print('main full self driving loop running!!!')
+#     current_time = monotonic_ns()
 scan_area()
 # arr[car_y,car_x] = 88881
-forward(dist)
-time.sleep(1)
+astar_arr = a_star_search_returnPath(arr,(car_y,car_x),(target_y,target_x))
+print(astar_arr)
+
+# forward(dist)
+# time.sleep(1)
 # arr[car_y,car_x] = 88882
-turn_right_90()
-forward(dist)
+# turn_right_90()
+# forward(dist)
 # arr[car_y,car_x] = 88883
 # time.sleep(1)
 # turn_left_90()
@@ -285,6 +300,7 @@ forward(dist)
 # arr[car_y,car_x] = 88884
 # time.sleep(1)
 # turn_right_90()
+
 
 
 b = sc.ndimage.binary_dilation(arr,[
@@ -306,3 +322,130 @@ df.to_csv('test_pad.csv')
 # test erosion
 df = pd.DataFrame(c.astype(int))
 df.to_csv('test_contour.csv')
+
+#main loop, for both traffic sign detection and Path finding
+while True:
+       #initialization for main section
+    global take_photo_counter, start_time
+
+    #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
+    Vilib.camera_start(vflip=False,hflip=False)
+    Vilib.display(local=True,web=True)
+    Vilib.traffic_detect_switch(True)
+    print('main full self driving loop running!!!')
+    current_time = monotonic_ns()
+    time_elapsed=(current_time-start_time)/1000000000
+    print ('time elapsed in seconds: ', str(time_elapsed))
+
+    #traffic detection logic
+    traffic_sign_detection_bool=ssd.traffic_sign_detection()
+
+    #traffic_sign_handling, will be running until traffic_sign_cleared
+    if traffic_sign_detection_bool==True:
+        # global stop_sleep_time
+        print('traffic_sign_detection loop hit!!!')
+        ssd.PiCarX_STOP_traffic_sign_reaction();
+
+#         #car go for 3 blocks
+#         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
+#         #This 3 secs is synced with the stop_sleep_time, thus the out of the order variable name
+#         length_path-(stop_sleep_time)
+
+#         #let the car take a breather
+#         sleep(1)
+
+    
+#     if traffic_sign_detection_bool==False:
+#         # CODE BELOW NOT TESTED YET
+#         '''
+#         scan_area()
+#         plot
+#         astar
+#         astar_navigation
+
+#         '''
+#         if (length_path<=0):
+#             #make Car turn function required here!!!!!!!
+#             # local_map=a_star_algorithm.a_star_search_returnMap(absolute_map,start_coordinate_local_map,stop_coordinate_local_map)
+#             # absolute_map=a_star_algorithm.a_star_search_returnMap(absolute_map,start_coordinate_absolute_map,stop_coordinate_absolute_map)
+
+#             # If turning, then recalculate shortest path and length of the specified path, to be feed into the forward control
+#             if next_direction!='starting':
+#                 PiCarX_rotate(next_direction);
+            
+#             #always scan and register obstacle in absolute map when length of travel required done
+#             PiCarX_scan();
+
+#             #recalculate the shortest path from the current_coordinate
+#             next_path=a_star_algorithm.a_star_search_returnPath(absolute_map,current_coordinate,stop_coordinate_absolute_map)
+#             #grab length required to travel, convert it as to seconds for forward control
+#             for index, coordinate in next_path:
+#                 #check for the  difference in first tuple component, if negative = needs to go up; if positive = needs to go down
+#                 if (next_path[0][index+1][0]-next_path[0][index][0])>0:
+#                     if (current_direction=='starting' or current_direction=='down'):
+#                         length_path+=1
+#                         current_direction='down'
+#                     else:
+#                         next_direction='down'
+#                         stop_coordinate_temp_map=next_path[0][index]
+#                         break
+
+#                 elif (next_path[0][index+1][0]-next_path[0][index][0])<0:
+#                     if (current_direction=='starting' or current_direction=='up'):
+#                         length_path+=1
+#                         current_direction='up'
+#                     else:
+#                         next_direction='up'
+#                         stop_coordinate_temp_map=next_path[0][index]
+#                         break
+
+#                 #check for the  difference in second tuple component, if negative = needs to go right; if positive = needs to go left
+#                 elif (next_path[0][index+1][1]-next_path[0][index][1])>0:
+#                     if (current_direction=='starting' or current_direction=='left'):
+#                         length_path+=1
+#                         current_direction='left'
+#                     else:
+#                         next_direction='left'
+#                         stop_coordinate_temp_map=next_path[0][index]
+#                         break
+
+#                 elif (next_path[0][index+1][1]-next_path[0][index][1])<0:
+#                     if (current_direction=='starting' or current_direction=='right'):
+#                         length_path+=1
+#                         current_direction='right'
+#                     else:
+#                         next_direction='right'
+#                         stop_coordinate_temp_map=next_path[0][index]
+#                         break
+                
+#                 else:
+#                     print('something is wrong with length measurement!!!')
+#                     break
+
+#         #if Car move forward
+#         temp_time_driving_anchor=monotonic_ns()
+#         while ((traffic_sign_detection_bool==False) and ((monotonic_ns()-temp_time_driving_anchor)<length_path)):
+#             print ('drive the car to the specified desination with directional, length, and power control')
+#             # this check will break the while loop when the traffic_sign_detected, will go to the main while True loop
+#             px.forward(POWER)
+#             traffic_sign_detection_bool=traffic_sign_detection();
+#             if traffic_sign_detection_bool==True:
+#                 #update and store remaining length of travel
+#                 length_path=length_path-(monotonic_ns()-temp_time_driving_anchor)
+
+#         #when the drive is cleared as intended from the path, update the current coordinate, and rotate
+#         if ((monotonic_ns()-temp_time_driving_anchor)>length_path):
+#             current_coordinate=stop_coordinate_temp_map #track the last coordinate the car should stop at, forward loop, no feedback control loop, careful
+
+#         ###YOUR CODE HERE!!!!
+#         sleep(1)
+
+# if __name__ == "__main__":
+#     try:
+#         main()
+#     except Exception as e:
+#         print ('exception triggered: ', e)
+#     finally:
+#         print("shutting down")
+#         Vilib.camera_close()
+#         exit();
