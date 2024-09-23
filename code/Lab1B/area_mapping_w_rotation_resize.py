@@ -369,8 +369,11 @@ while True:
         print('main loop traffic_sign_detection loop hit!!!')
         ssd.PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool);
 
+    # scan terrain for objects
     scan_area()
     scan_count+=1
+
+    # retrieve astar mapping to guide navigation, save map for diagnostics
     astar_array = arr.astype(bool)
     astar_array = (~arr).astype(int)
     
@@ -380,6 +383,27 @@ while True:
     maze=np.asarray(maze).astype(int)
     np.savetxt(f"maze{scan_count}.csv", maze.astype(int), fmt='%s', delimiter=",")
     navigate_astar(astar_arr)
+
+    dilation = sc.ndimage.binary_dilation(arr,[
+    [ 1, 1],
+    [1, 1]
+    ])
+    erosion = sc.ndimage.binary_erosion(b,[
+        [1, 1],
+        [ 1, 1]
+    ])
+    # test regular array
+    df= pd.DataFrame(arr)
+    df.to_csv('test.csv')
+
+    # test dilation/padding
+    df = pd.DataFrame(dilation.astype(int))
+    df.to_csv('test_pad.csv')
+
+    # test erosion
+    df = pd.DataFrame(erosion.astype(int))
+    df.to_csv('test_contour.csv')
+
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
 #         #This 3 secs is synced with the stop_sleep_time, thus the out of the order variable name
