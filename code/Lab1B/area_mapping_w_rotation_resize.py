@@ -388,7 +388,7 @@ while True:
     [ 1, 1],
     [1, 1]
     ])
-    erosion = sc.ndimage.binary_erosion(b,[
+    erosion = sc.ndimage.binary_erosion(dilation,[
         [1, 1],
         [ 1, 1]
     ])
