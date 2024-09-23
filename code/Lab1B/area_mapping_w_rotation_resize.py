@@ -333,27 +333,27 @@ df = pd.DataFrame(c.astype(int))
 df.to_csv('test_contour.csv')
 
 # #main loop, for both traffic sign detection and Path finding
-# while True:
-#        #initialization for main section
-#     global take_photo_counter, start_time
+while True:
+       #initialization for main section
+    global take_photo_counter, start_time
 
-#     #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
-#     Vilib.camera_start(vflip=False,hflip=False)
-#     Vilib.display(local=True,web=True)
-#     Vilib.traffic_detect_switch(True)
-#     print('main full self driving loop running!!!')
-#     current_time = monotonic_ns()
-#     time_elapsed=(current_time-start_time)/1000000000
-#     print ('time elapsed in seconds: ', str(time_elapsed))
+    #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
+    Vilib.camera_start(vflip=False,hflip=False)
+    Vilib.display(local=True,web=True)
+    Vilib.traffic_detect_switch(True)
+    print('main full self driving loop running!!!')
+    current_time = monotonic_ns()
+    time_elapsed=(current_time-start_time)/1000000000
+    print ('time elapsed in seconds: ', str(time_elapsed))
 
-#     #traffic detection logic
-#     traffic_sign_detection_bool=ssd.traffic_sign_detection()
+    #traffic detection logic
+    traffic_sign_detection_bool=ssd.traffic_sign_detection()
 
-#     #traffic_sign_handling, will be running until traffic_sign_cleared
-#     if traffic_sign_detection_bool==True:
-#         # global stop_sleep_time
-#         print('traffic_sign_detection loop hit!!!')
-#         ssd.PiCarX_STOP_traffic_sign_reaction();
+    #traffic_sign_handling, will be running until traffic_sign_cleared
+    if traffic_sign_detection_bool==True:
+        # global stop_sleep_time
+        print('traffic_sign_detection loop hit!!!')
+        ssd.PiCarX_STOP_traffic_sign_reaction();
 
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
