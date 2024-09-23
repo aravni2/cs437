@@ -162,12 +162,15 @@ def a_star_search_returnPath(maze,start,end):
     #directly return an array of tuples of shortest path found in the A*
     return path
 
-# start = (40,100)
-# end= (30,103)
-# np.set_printoptions(threshold=sys.maxsize)
-# a_array= np.genfromtxt('C:/Users/aravn/Desktop/Courses/UIUC/CS437 - Internet of Things/Lab Repo/cs437/test.csv',delimiter=',').astype(int)
-# print (a_array.shape)
-# x =a_star_search_returnMap(a_array,start,end)
+start = (40,100)
+end= (30,103)
+np.set_printoptions(threshold=sys.maxsize)
+a_array= np.genfromtxt('/home/pi/cs437/test.csv',delimiter=',').astype(bool)
+print(a_array)
+a_array = (~a_array).astype(int)
+print (a_array.shape)
+maze =a_star_search_returnMap(a_array,start,end)
 
-# print(a_array)
-# print(x)
+# maze=np.asarray(a_array).astype(int)
+# print (maze)
+np.savetxt("maze.csv", maze.astype(int), fmt='%s', delimiter=",")
