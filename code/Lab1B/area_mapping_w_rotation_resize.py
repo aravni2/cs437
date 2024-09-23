@@ -230,7 +230,7 @@ def plot_points(arr,x_pos,y_pos):
 
 def scan_area():
     global scan_count
-    scan_count+=1
+    # scan_count+=1
     fc.servo.set_angle(0)
     time.sleep(1)
     # print(arr)
