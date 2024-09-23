@@ -8,7 +8,7 @@ import cv2
 from tflite_runtime import interpreter
 from a_star_utils import a_star_search_returnPath,a_star_search_returnMap
 import stop_sign_detection as ssd
-import vilib
+# from vilib import Vilib
 
 # # Ultrasonic
 ANGLE_RANGE = 140
@@ -339,17 +339,22 @@ print('main full self driving loop running!!!')
 # df = pd.DataFrame(c.astype(int))
 # df.to_csv('test_contour.csv')
 # //////////////////////////////
+#start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
+Vilib.camera_start(vflip=False,hflip=False)
+Vilib.display(local=True,web=True)
+Vilib.traffic_detect_switch(True)
 
-
+#let the hardware warm up for 1 sec
+time.sleep(1)
 # #main loop, for both traffic sign detection and Path finding
 while True:
        #initialization for main section
     global take_photo_counter, start_time
 
     #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
-    Vilib.camera_start(vflip=False,hflip=False)
-    Vilib.display(local=True,web=True)
-    Vilib.traffic_detect_switch(True)
+    # Vilib.camera_start(vflip=False,hflip=False)
+    # Vilib.display(local=True,web=True)
+    # Vilib.traffic_detect_switch(True)
     print('main full self driving loop running!!!')
     # current_time = time.timemonotonic_ns()
     # time_elapsed=(current_time-start_time)/1000000000
