@@ -69,8 +69,12 @@ def traffic_sign_detection()->bool:
 #     POWER=30
 
 def PiCarX_STOP_traffic_sign_reaction():
-    global POWER
+    # global POWER
     print('PiCarX_traffic_sign_reaction executed, stop sign detected')
+    
+    while traffic_sign_detection_bool ==True:
+        time.sleep(3)
+        traffic_sign_detection_bool= traffic_sign_detection()
     # fc.stop()
     # time.sleep(5)
     # px.backward(0)

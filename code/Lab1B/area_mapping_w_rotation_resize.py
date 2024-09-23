@@ -24,13 +24,13 @@ errors = []
 
 # car positions /////////////////////////
 global facing_angle, angle_rel, car_x, car_y, arr,arr_x,arr_y,turn_time_per_rad,speed,dist
-global dist_to_target, scan_count
+global dist_to_target, scan_count, traffic_sign_detection_bool
 
 # absolute value of cars angle to vertical (starts facing 90)
 facing_angle = math.pi/2
 facing_dir = 'North'
 
-
+traffic_sign_detection_bool= False
 # rotation of last car turn
 angle_rel = 0
 
@@ -78,6 +78,9 @@ def turn_left_90():
 
 
 def forward(dist):
+    traffic_sign_detection_bool=ssd.traffic_sign_detection()
+    if traffic_sign_detection_bool==True:
+        ssd.PiCarX_STOP_traffic_sign_reaction()
     fc.forward(70)
     time.sleep(speed*dist)
     fc.stop()
@@ -286,17 +289,21 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
 
 print('main full self driving loop running!!!')
 #     current_time = monotonic_ns()
-scan_area()
-# arr[car_y,car_x] = 88881
-astar_array = arr.astype(bool)
-astar_array = (~arr).astype(int)
 
-astar_arr = a_star_search_returnPath(astar_array,(car_y,car_x),(target_y,target_x))
-print(astar_arr)
-maze =a_star_search_returnMap(astar_array,(car_y,car_x),(target_y,target_x))
-maze=np.asarray(maze).astype(int)
-np.savetxt("maze.csv", maze.astype(int), fmt='%s', delimiter=",")
-navigate_astar(astar_arr)
+# ADD TO MAIN
+# scan_area()
+
+# astar_array = arr.astype(bool)
+# astar_array = (~arr).astype(int)
+
+# astar_arr = a_star_search_returnPath(astar_array,(car_y,car_x),(target_y,target_x))
+# print(astar_arr)
+# maze =a_star_search_returnMap(astar_array,(car_y,car_x),(target_y,target_x))
+# maze=np.asarray(maze).astype(int)
+# np.savetxt("maze.csv", maze.astype(int), fmt='%s', delimiter=",")
+# navigate_astar(astar_arr)
+# ///////////////////////
+
 # forward(dist)
 # time.sleep(1)
 # arr[car_y,car_x] = 88882
@@ -311,26 +318,28 @@ navigate_astar(astar_arr)
 # turn_right_90()
 
 
+# ADD TO MAIN
+# b = sc.ndimage.binary_dilation(arr,[
+#     [ 1, 1],
+#     [1, 1]
+# ])
+# c = sc.ndimage.binary_erosion(b,[
+#     [1, 1],
+#     [ 1, 1]
+# ])
+# # test regular array
+# df= pd.DataFrame(arr)
+# df.to_csv('test.csv')
 
-b = sc.ndimage.binary_dilation(arr,[
-    [ 1, 1],
-    [1, 1]
-])
-c = sc.ndimage.binary_erosion(b,[
-    [1, 1],
-    [ 1, 1]
-])
-# test regular array
-df= pd.DataFrame(arr)
-df.to_csv('test.csv')
+# # test dilation/padding
+# df = pd.DataFrame(b.astype(int))
+# df.to_csv('test_pad.csv')
 
-# test dilation/padding
-df = pd.DataFrame(b.astype(int))
-df.to_csv('test_pad.csv')
+# # test erosion
+# df = pd.DataFrame(c.astype(int))
+# df.to_csv('test_contour.csv')
+# //////////////////////////////
 
-# test erosion
-df = pd.DataFrame(c.astype(int))
-df.to_csv('test_contour.csv')
 
 # #main loop, for both traffic sign detection and Path finding
 while True:
@@ -342,9 +351,9 @@ while True:
     Vilib.display(local=True,web=True)
     Vilib.traffic_detect_switch(True)
     print('main full self driving loop running!!!')
-    current_time = monotonic_ns()
-    time_elapsed=(current_time-start_time)/1000000000
-    print ('time elapsed in seconds: ', str(time_elapsed))
+    # current_time = time.timemonotonic_ns()
+    # time_elapsed=(current_time-start_time)/1000000000
+    # print ('time elapsed in seconds: ', str(time_elapsed))
 
     #traffic detection logic
     traffic_sign_detection_bool=ssd.traffic_sign_detection()
@@ -352,7 +361,7 @@ while True:
     #traffic_sign_handling, will be running until traffic_sign_cleared
     if traffic_sign_detection_bool==True:
         # global stop_sleep_time
-        print('traffic_sign_detection loop hit!!!')
+        print('main loop traffic_sign_detection loop hit!!!')
         ssd.PiCarX_STOP_traffic_sign_reaction();
 
 #         #car go for 3 blocks
