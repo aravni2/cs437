@@ -8,7 +8,7 @@ import cv2
 from tflite_runtime import interpreter
 from a_star_utils import a_star_search_returnPath,a_star_search_returnMap
 import stop_sign_detection as ssd
-# from vilib import Vilib
+from vilib import Vilib
 
 # # Ultrasonic
 ANGLE_RANGE = 140
@@ -350,12 +350,12 @@ time.sleep(1)
 while True:
        #initialization for main section
     global take_photo_counter, start_time
-
+    time.sleep(1)
     #start video streaming using Rasp Pi as host, transfer with HTTP in localhost, turn traffic_sign_detection to true
     # Vilib.camera_start(vflip=False,hflip=False)
     # Vilib.display(local=True,web=True)
     # Vilib.traffic_detect_switch(True)
-    print('main full self driving loop running!!!')
+    # print('main full self driving loop running!!!')
     # current_time = time.timemonotonic_ns()
     # time_elapsed=(current_time-start_time)/1000000000
     # print ('time elapsed in seconds: ', str(time_elapsed))
@@ -363,11 +363,12 @@ while True:
     #traffic detection logic
     traffic_sign_detection_bool=ssd.traffic_sign_detection()
 
+
     #traffic_sign_handling, will be running until traffic_sign_cleared
     if traffic_sign_detection_bool==True:
         # global stop_sleep_time
         print('main loop traffic_sign_detection loop hit!!!')
-        ssd.PiCarX_STOP_traffic_sign_reaction();
+        ssd.PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool);
 
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 

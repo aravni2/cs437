@@ -68,7 +68,7 @@ def traffic_sign_detection()->bool:
 #     px.set_cam_pan_angle(0)
 #     POWER=30
 
-def PiCarX_STOP_traffic_sign_reaction():
+def PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool):
     # global POWER
     print('PiCarX_traffic_sign_reaction executed, stop sign detected')
     
