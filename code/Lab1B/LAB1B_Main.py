@@ -35,12 +35,11 @@ traffic_sign_detection_bool= False
 angle_rel = 0
 
 # car starting point
-car_x = 107
-car_y = 40
-
+car_x = 100
+car_y = 42
 # target postion
-target_x = 110
-target_y = 29
+target_x = 100
+target_y = 30
 dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
 print(dist_to_target)
 
@@ -224,7 +223,7 @@ def scan_step(ref):
 
 
 def plot_points(arr,x_pos,y_pos):
-    if (angle_distance[1] < 150) and (angle_distance[1]>=0):
+    if (angle_distance[1] < 150) and (angle_distance[1]>=0)and (x_pos< 200) and (x_pos>0) and (y_pos<50) and (y_pos>0):
             # arr[y_pos,x_pos] = scan_count
             arr[y_pos,x_pos] = 1
 
@@ -383,7 +382,7 @@ while True:
     maze=np.asarray(maze).astype(int)
     np.savetxt(f"maze{scan_count}.csv", maze.astype(int), fmt='%s', delimiter=",")
     navigate_astar(astar_arr)
-
+    
     dilation = sc.ndimage.binary_dilation(arr,[
     [ 1, 1],
     [1, 1]
@@ -403,6 +402,7 @@ while True:
     # test erosion
     df = pd.DataFrame(erosion.astype(int))
     df.to_csv('test_contour.csv')
+    # arr = np.zeros((arr_y,arr_x)).astype(bool)
 
 #         #car go for 3 blocks
 #         #adjust for the travel required after the stop sign, drive forward after for 3 secs needs to be counted. 
