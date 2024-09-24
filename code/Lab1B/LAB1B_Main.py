@@ -36,10 +36,10 @@ angle_rel = 0
 
 # car starting point
 car_x = 100
-car_y = 41
+car_y = 43
 # target postion
 target_x = 100
-target_y = 30
+target_y = 31
 dist_to_target = math.sqrt((car_y-target_y)**2+(car_x-target_x)**2)
 print(dist_to_target)
 
