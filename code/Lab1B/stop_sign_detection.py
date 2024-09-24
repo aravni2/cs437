@@ -133,7 +133,7 @@ def main():
 
         #traffic_sign_handling, will be running until traffic_sign_cleared
         if traffic_sign_detection_bool==True:
-            PiCarX_STOP_traffic_sign_reaction();
+            PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool);
             #let the car take a breather
             # time.sleep(15)
         

@@ -218,7 +218,7 @@ def scan_area():
     scan_count+=1
     fc.servo.set_angle(0)
     time.sleep(1)
-    print(arr)
+    # print(arr)
     
     for _ in range(290):
 

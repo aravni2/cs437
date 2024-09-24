@@ -36,7 +36,7 @@ angle_rel = 0
 
 # car starting point
 car_x = 100
-car_y = 42
+car_y = 41
 # target postion
 target_x = 100
 target_y = 30
