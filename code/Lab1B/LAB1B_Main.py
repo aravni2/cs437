@@ -265,7 +265,7 @@ def scan_area():
         x_pos = car_x+x_rt
         y_pos = car_y-y_rt
 
-        print("x,y new" ,x_pos,y_pos)        
+        # print("x,y new" ,x_pos,y_pos)        
 
         # plot coordinates on large array
         plot_points(arr,x_pos,y_pos)
@@ -277,7 +277,7 @@ def rotate_transform(facing_angle,angle_rel, car_x,car_y,x_obj,y_obj):
     x_new =int( x_obj*math.cos(rot_angle) - y_obj*math.sin(rot_angle))
     y_new =int( x_obj*math.sin(rot_angle) + y_obj*math.cos(rot_angle))
 
-    print("rotate x,y:", (x_new,y_new))
+    # print("rotate x,y:", (x_new,y_new))
     # x_new= x_new +car_x
     # y_new = y_new +car_y
     # print("transform x,y:", (x_new,y_new))

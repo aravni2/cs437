@@ -77,6 +77,15 @@ def PiCarX_STOP_traffic_sign_reaction(traffic_sign_detection_bool):
         time.sleep(3)
         traffic_sign_detection_bool= traffic_sign_detection()
     print('out of loop')
+
+
+    traffic_sign_detection_bool= traffic_sign_detection()
+
+    while traffic_sign_detection_bool ==True:
+        print('in stop sign loop')
+        time.sleep(3)
+        traffic_sign_detection_bool= traffic_sign_detection()
+    print('out of loop')
     # fc.stop()
     # time.sleep(5)
     # px.backward(0)
